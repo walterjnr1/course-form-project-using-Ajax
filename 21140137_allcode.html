@@ -1,0 +1,1401 @@
+
+						<!-- Login.html page -->
+<!-- 
+//===================================================================//
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Student Login</title>
+
+	<link rel="stylesheet" type="text/css" href="./assets/styles.css">
+</head>
+<body>
+
+
+<div class="header">
+
+	<img src="./assets/logo.jpeg" alt="sch_logo">
+
+	<h4>European University of Lefke</h4>
+</div>
+
+<div class="body">
+
+	<div class="login-wrapper">
+		<img src="./assets/logo.jpeg" alt="sch_logo">
+		<h3>Welcome to European University of Lefke</h3>
+		<h4>Student Login</h4>
+
+		<div class="login-form">
+			<form id="loginForm" autocomplete="off">
+				<div id="errMsg" style="color:red; margin-bottom: 10px;"></div>
+				
+				<div class="input-field">
+					<input type="text" name="uname" id="uname" placeholder="Surname">
+				</div>
+
+				<div class="input-field">
+					<input type="password" name="pword" id="pword" placeholder="Student Number">
+				</div>
+
+				<div class="input-field">
+					<button type="submit" name="login_btn" id="login_btn">Login</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script src="./assets/login.js"></script>
+</body>
+</html>
+
+
+						<!-- Register.php page -->
+<!-- 
+//===================================================================//
+ -->
+
+
+<?php 
+session_start();
+if (!isset($_SESSION['studno'])) {
+	header('location:login.html');
+}
+else {
+	$studno = $_SESSION['studno'];
+}
+if(isset($_GET['logout'])=='yes'){
+    session_destroy();
+    header("Location: ./login.html");
+}
+ ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Register Courses</title>
+
+	<link rel="stylesheet" type="text/css" href="./assets/styles.css">
+</head>
+<body>
+
+<div class="header">
+
+	<img src="./assets/logo.jpeg" alt="sch_logo">
+
+	<h4>European University of Lefke</h4>
+
+
+	<div class="profile">
+		<img src="./assets/avatar.png" alt="student_img">
+		<a href="?logout=yes">Logout</a>
+	</div>
+</div>
+
+
+<dib class="body-wrapper">
+	<div class="left">
+		<div class="left-body">
+			<h4 class="prof"> Profile Dashboard</h4>
+			<div class="student-details">
+				
+			</div>
+
+			<table class="profile_tbl">
+				<thead>
+					<tr>
+						<th><img class="stud_img" src="./assets/avatar.png" alt="student_img"></th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<?php 
+
+					$dbHost = "localhost";
+					$dbUsername = "root";
+					$dbPassword = "";
+					$dbName = "eaps_db";
+
+					$dsn = "mysql:host=".$dbHost.";dbname=".$dbName;
+					$pdo = new PDO($dsn, $dbUsername, $dbPassword);
+					$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+					$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+					$sql = "SELECT * FROM students_tbl WHERE studno = :studno";
+			        $stmt=$pdo->prepare($sql);
+			        $stmt->execute(['studno'=>$studno]);
+			        if($stmt->rowCount()>0){
+			        $results = $stmt->fetch(PDO::FETCH_ASSOC);
+			        	?>
+			        	<tr>
+							<td><?php echo $results['lname'] .', '.$results['fname'] ?></td>
+						</tr>
+						<tr>
+							<td><?php echo $results['dept'] ?></td>
+						</tr>
+						<tr>
+							<td><?php echo $results['semester'] ?></td>
+						</tr>
+						<tr>
+							<td><?php echo 'CGPA: '.$results['cgpa'] ?></td>
+						</tr>
+			        	<?php
+			        }
+			        else {
+			        	?>
+
+			        	<tr>
+							<td>LASTNAME, FIRSTNAME</td>
+						</tr>
+						<tr>
+							<td>DEPARTMENT</td>
+						</tr>
+						<tr>
+							<td>SEMESTER</td>
+						</tr>
+						<tr>
+							<td>CGPA</td>
+						</tr>
+
+			        	<?php
+			        }
+					 ?>
+
+
+					
+				</tbody>
+			</table>
+
+
+			<div class="insert-form">
+				<form id="regStudentForm" autocomplete="off">
+					<h4 class="insert-form-title">Register Student Info</h4>
+
+
+					<div class="input-field">
+						<input type="text" name="lname" id="lname" placeholder="Last Name">
+					</div>
+
+					<div class="input-field">
+						<input type="text" name="fname" id="fname" placeholder="First Name">
+					</div>
+
+					<div class="input-field">
+						<input type="text" name="studno" id="studno" placeholder="Student No.">
+					</div>
+
+					<div class="input-field">
+						<input type="text" name="dept" id="dept" placeholder="Department">
+					</div>
+
+					<div class="input-field">
+						<input type="text" name="cgpa" id="cgpa" placeholder="CGPA">
+					</div>
+
+					<div class="input-field">
+						<input type="text" name="semester" id="semester" placeholder="Semester">
+					</div>
+
+					<div class="input-field">
+						<button type="submit" name="login_btn" id="login_btn">Submit</button>
+					</div>
+
+					<div id="error-msg"></div>
+					<div id="succMsg"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="right">
+		
+		<div class="header-title">
+			<h5>Course Registration Form</h5>
+		</div>
+
+		<p class="warning-para">
+			Please click on the "<b>Check Box</b>" beside each course to register the course or courses... <br>
+
+			<b>NOTE:</b> You cannot register more than five courses for the semester.
+		</p>
+		<div id="errRegMess" style="text-align:center; color: red;"></div>
+		<table style="font-size:14px; font-weight: 300; text-transform: uppercase;">
+			<thead>
+				<tr>
+					<th style="font-weight:500; text-align: center;">Register</th>
+					<th style="font-weight:500; text-align: center;">Course Code</th>
+					<th style="font-weight:500; text-align: center;">Course Title</th>
+					<th style="font-weight:500; text-align: center;">Course Unit</th>
+				</tr>
+			</thead>
+			<form id="registerCourseForm">
+			<tbody id="coursesWrapper"></tbody>
+
+		</table>
+		<br>
+		<hr style="border:1px solid rgba(0, 0, 0, 0.2);">
+		<div style="text-align: right; margin-top: 10px;">
+			<button style="width: 25%; margin-right: 15%;" type="submit">Register Courses</button>
+		</div>
+		</form>
+
+
+		<div class="header-title">
+			<h5>Registered Courses</h5>
+		</div>
+
+		<p class="warning-para">
+			View all registered courses
+		</p>
+
+		<table style="font-size:14px; font-weight: 300; text-transform: uppercase;">
+			<thead>
+				<tr>
+					<th style="font-weight:500; text-align: center;">S/N</th>
+					<th style="font-weight:500; text-align: center;">Course Title</th>
+					<!-- <th style="font-weight:500; text-align: center;">Remove</th> -->
+				</tr>
+			</thead>
+		<form id="deleteCourses">
+				<tbody id="innerWrapper"></tbody>	
+					
+			</table>
+			<br>
+			<hr style="border:1px solid rgba(0, 0, 0, 0.2);">
+			<div style="text-align: right; margin-top: 10px;">
+				<button style="width: 25%; margin-right: 15%;" type="submit">Delete Course(s)</button>
+			</div>
+		</form>
+
+		<script type="text/javascript">
+			var deleteCourses = document.getElementById('deleteCourses');
+			deleteCourses.addEventListener('submit', function(event){
+				event.preventDefault();
+				deleteCourses();
+			});
+
+		</script>
+
+		<div class="header-title">
+			<h5>Make Comment(s)</h5>
+		</div>
+
+		<p class="warning-para">
+			To make comment(s), type in your comment in the textarea provided below and click on the send button.
+		</p>
+
+		<form id="sendComment">
+			<textarea id="comment" class="tarea" rows="7" placeholder="Type your comment here..."></textarea>
+
+			<div style="text-align: right; margin-top: 10px;">
+				<button style="width: 15%; margin-right: 5%;" type="submit">Send</button>
+			</div>
+		</form>
+		<br><br><br>
+
+	</div>
+
+</div>
+
+<script src="./assets/main.js"></script>
+<script src="./assets/register.js"></script>
+<script src="./assets/sendComment.js"></script>
+<script type="text/javascript">
+	loadCourses();
+
+	function loadCourses(){
+		var coursesWrapper = document.getElementById("coursesWrapper");
+		var req;
+		if (window.XMLHttpRequest) {
+			req = new XMLHttpRequest(); 
+		}
+		else if (window.ActiveXObject) {
+			req = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		req.open("GET","http://localhost:8080/myass/ajx.php?action=getCourses",true);
+		req.send();
+
+		req.onreadystatechange=function(){
+			if(req.readyState == 4 && req.status == 200){
+				coursesWrapper.innerHTML = req.responseText
+			}
+		};
+	}
+
+	function deleteCourses(){
+		var innerWrapper = document.getElementById("innerWrapper");
+		var coursesWrapper = document.getElementById("coursesWrapper");
+		var req;
+		if (window.XMLHttpRequest) {
+			req = new XMLHttpRequest(); 
+		}
+		else if (window.ActiveXObject) {
+			req = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		req.open("GET","http://localhost:8080/myass/ajx.php?action=deleteCourses",true);
+		req.send();
+
+		req.onreadystatechange=function(){
+			if(req.readyState == 4 && req.status == 200){
+				coursesWrapper.innerHTML = req.responseText
+				innerWrapper.innerHTML = ""
+			}
+		};
+	}
+
+</script>
+</body>
+</html>
+
+
+						<!-- action.php file -->
+<!-- 
+//===================================================================//
+ -->
+
+<?php 
+if (isset($_GET['surname']) AND isset($_GET['studno'])) {
+    $sanitizer = filter_var_array($_GET, FILTER_SANITIZE_STRING);
+    $surname = $sanitizer['surname'];
+    $studno = $sanitizer['studno'];
+
+    $xml = simplexml_load_file("assets/student.xml");
+    if (file_exists('assets/student.xml')) {
+            $xml = new SimpleXMLElement('assets/student.xml', 0, true);
+            if ($surname==$xml->Student->Surname && $studno == $xml->Student->StudentNo) {
+                echo 'Login Successful. Redirecting in 2s...';
+                session_start();
+                $_SESSION['studno'] = $studno;
+            }
+            else {
+                echo 'Invalid login credentials.';
+            }
+        }   
+}
+
+ ?>
+
+
+
+ 						<!-- ajx.php file -->
+<!-- 
+//===================================================================//
+ -->
+
+
+ <?php 
+
+if (isset($_GET['Java']) || isset($_GET['PHP']) || isset($_GET['C'] )|| isset($_GET['CPlus']) || isset($_GET['JavaScript']) || isset($_GET['CSharp']) || isset($_GET['TypeScript']) || isset($_GET['FSharp']) || isset($_GET['Python']) || isset($_GET['SQL'])) {
+	$i = 1;
+
+	$Java = $_GET['Java'];
+	$PHP = $_GET['PHP'];
+	$C = $_GET['C'];
+	$CPlus = $_GET['CPlus'];
+	$JavaScript = $_GET['JavaScript'];
+	$CSharp = $_GET['CSharp'];
+	$TypeScript = $_GET['TypeScript'];
+	$FSharp = $_GET['FSharp'];
+	$Python = $_GET['Python'];
+	$SQL = $_GET['SQL'];
+	
+	if ($Java == "Java") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'. $Java .'</td>
+			</tr>
+
+		';
+	}
+	elseif ($Java == "null") {
+		
+	}
+
+	if ($PHP == "PHP") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'. $PHP .'</td>
+			</tr>
+
+		';
+	}
+	elseif ($PHP == "null") {
+		
+	}
+
+
+
+	if ($C == "C") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'.$C.'</td>
+			</tr>
+
+		';
+	}
+	elseif ($C == "null") {
+		
+	}
+
+
+
+	if ($CPlus == "CPlus") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'.$CPlus.'</td>
+			</tr>
+
+		';
+	}
+	elseif ($CPlus == "null") {
+		
+	}
+
+
+
+	if ($JavaScript == "JavaScript") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'.$JavaScript.'</td>
+			</tr>
+
+		';
+	}
+	elseif ($JavaScript == "null") {
+		
+	}
+
+
+
+	if ($CSharp == "CSharp") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'.$CSharp.'</td>
+			</tr>
+
+		';
+	}
+	elseif ($CSharp == "null") {
+		
+	}
+
+
+
+	if ($TypeScript == "TypeScript") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'.$TypeScript.'</td>
+			</tr>
+
+		';
+	}
+	elseif ($TypeScript == "null") {
+		
+	}
+
+
+
+	if ($FSharp == "FSharp") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'.$FSharp.'</td>
+			</tr>
+
+		';
+	}
+	elseif ($FSharp == "null") {
+		
+	}
+
+
+
+	if ($Python == "Python") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'.$Python.'</td>
+			</tr>
+
+		';
+	}
+	elseif ($Python == "null") {
+		
+	}
+
+
+
+	if ($SQL == "SQL") {
+		echo '
+			<tr>
+				<td style="text-align:center">'.$i++.'</td>
+				<td style="text-align:center">'.$SQL.'</td>
+			</tr>
+
+		';
+	}
+	elseif ($SQL == "null") {
+		
+	}
+
+}
+
+
+if (isset($_GET['action']) && $_GET['action'] == "getCourses") {
+    $output = '';
+    $output .='
+
+        <tr id="1">
+            <td><input type="checkbox" name="courses[]" value="Java" id="Java"></td>
+            <td>JV101</td>
+            <td>Java</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="2">
+            <td><input type="checkbox" name="courses[]" value="PHP" id="PHP"></td>
+            <td>PHP101</td>
+            <td>PHP</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="3">
+            <td><input type="checkbox" name="courses[]" value="C" id="C"></td>
+            <td>C101</td>
+            <td>C</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="4">
+            <td><input type="checkbox" name="courses[]" value="CPlus" id="CPlus"></td>
+            <td>CP101</td>
+            <td>CPlus</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="5">
+            <td><input type="checkbox" name="courses[]" value="JavaScript" id="JavaScript"></td>
+            <td>JS101</td>
+            <td>JavaScript</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="6">
+            <td><input type="checkbox" name="courses[]" value="CSharp" id="CSharp"></td>
+            <td>CS101</td>
+            <td>CSharp</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="7">
+            <td><input type="checkbox" name="courses[]" value="TypeScript" id="TypeScript"></td>
+            <td>TP101</td>
+            <td>TypeScript</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="8">
+            <td><input type="checkbox" name="courses[]" value="FSharp" id="FSharp"></td>
+            <td>FS101</td>
+            <td>FSharp</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="9">
+            <td><input type="checkbox" name="courses[]" value="Python" id="Python"></td>
+            <td>PY101</td>
+            <td>Python</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="10">
+            <td><input type="checkbox" name="courses[]" value="SQL" id="SQL"></td>
+            <td>SQL101</td>
+            <td>SQL</td>
+            <td>1</td>
+        </tr>
+    ';
+        
+    echo $output;
+        
+}
+
+
+if (isset($_GET['action']) && $_GET['action'] == "deleteCourses") {
+	$output = '';
+    $output .='
+
+        <tr id="1">
+            <td><input type="checkbox" name="courses[]" value="Java" id="Java"></td>
+            <td>JV101</td>
+            <td>Java</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="2">
+            <td><input type="checkbox" name="courses[]" value="PHP" id="PHP"></td>
+            <td>PHP101</td>
+            <td>PHP</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="3">
+            <td><input type="checkbox" name="courses[]" value="C" id="C"></td>
+            <td>C101</td>
+            <td>C</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="4">
+            <td><input type="checkbox" name="courses[]" value="CPlus" id="CPlus"></td>
+            <td>CP101</td>
+            <td>CPlus</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="5">
+            <td><input type="checkbox" name="courses[]" value="JavaScript" id="JavaScript"></td>
+            <td>JS101</td>
+            <td>JavaScript</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="6">
+            <td><input type="checkbox" name="courses[]" value="CSharp" id="CSharp"></td>
+            <td>CS101</td>
+            <td>CSharp</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="7">
+            <td><input type="checkbox" name="courses[]" value="TypeScript" id="TypeScript"></td>
+            <td>TP101</td>
+            <td>TypeScript</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="8">
+            <td><input type="checkbox" name="courses[]" value="FSharp" id="FSharp"></td>
+            <td>FS101</td>
+            <td>FSharp</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="9">
+            <td><input type="checkbox" name="courses[]" value="Python" id="Python"></td>
+            <td>PY101</td>
+            <td>Python</td>
+            <td>1</td>
+        </tr>
+
+        <tr id="10">
+            <td><input type="checkbox" name="courses[]" value="SQL" id="SQL"></td>
+            <td>SQL101</td>
+            <td>SQL</td>
+            <td>1</td>
+        </tr>
+    ';
+    echo $output;
+}
+
+ ?>
+
+
+						<!-- db.php file -->
+<!-- 
+//===================================================================//
+ -->
+
+<?php 
+
+require(__DIR__ . '/dbController.php');
+
+$db = new myAjaxAssignment();
+
+if (isset($_GET['lname']) OR $_GET['fname'] OR $_GET['studno'] OR $_GET['dept'] OR $_GET['cgpa'] OR $_GET['semester']) {
+	$sanitizer = filter_var_array($_GET, FILTER_SANITIZE_STRING);
+    $lname = $sanitizer['lname'];
+    $fname = $sanitizer['fname'];
+    $studno = $sanitizer['studno'];
+    $dept = $sanitizer['dept'];
+    $cgpa = $sanitizer['cgpa'];
+    $semester = $sanitizer['semester'];
+
+    $db->registerDetails($lname,$fname,$studno,$dept,$cgpa,$semester);
+}
+
+if (isset($_GET['comment'])) {
+    $sanitizer = filter_var_array($_GET, FILTER_SANITIZE_STRING);
+    $comment = $sanitizer['comment'];
+    $db->sendComment($comment);
+}
+
+
+ ?>
+
+
+
+
+ 						<!-- db.sql file -->
+<!-- 
+//===================================================================//
+ -->
+
+
+CREATE DATABASE `assignment`;
+CREATE TABLE `assignment`.`students_tbl` (`id` INT(11) NOT NULL AUTO_INCREMENT , `lname` VARCHAR(50) NOT NULL , `fname` VARCHAR(50) NOT NULL , `studno` VARCHAR(50) NOT NULL , `dept` VARCHAR(100) NOT NULL , `cgpa` VARCHAR(5) NOT NULL , `semester` VARCHAR(50) NOT NULL , `date_created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+
+
+
+ 						<!-- dbController.php file -->
+<!-- 
+//===================================================================//
+ -->
+
+<?php 
+session_start();
+require 'Exception.php';
+require 'PHPMailer.php';
+require 'SMTP.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+
+class myAjaxAssignment{
+
+    private $dsn = "mysql:host=localhost;dbname=eaps_db";
+    private $user = "root";
+    private $pass = "";
+    public $pdo;
+
+    public function __construct()
+    {
+        try {
+            $this->pdo = new PDO($this->dsn,$this->user,$this->pass);
+        } catch (PDOException $e) {
+           echo $e->getMessage(); 
+        }
+    }
+
+
+    // process the registration
+
+    public function registerDetails($lname,$fname,$studno,$dept,$cgpa,$semester){
+    	$sql = "INSERT INTO students_tbl(lname,fname,studno,dept,cgpa,semester)
+                                VALUES(:lname,:fname,:studno,:dept,:cgpa,:semester)";
+        $stmt = $this->pdo->prepare($sql);
+        if ($stmt->execute(['lname'=>$lname,'fname'=>$fname,'studno'=>$studno,'dept'=>$dept,'cgpa'=>$cgpa,'semester'=>$semester])){
+            echo "Details uploaded successfully";
+        }
+        else {
+            echo "An error occured. Try again";
+        }
+    }
+
+        // send comment(s) to email address
+        public function sendComment($comment){
+        $mail = new PHPMailer();
+        $mail->isSMTP();
+        $mail->Host         = ' '; //your email address
+        $mail->SMTPAuth     = true; 
+        $mail->Username     = ' '; //your email address
+        $mail->Password     = ' '; //your password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port         = "465";
+
+        $mail->setFrom(' '); //your email address
+        // Set Recepient
+        $mail->addAddress($email); //your email address
+        $message = $comment;
+        $mail->isHTML(true);
+        $mail->Subject = 'Email Verification';
+        $mail->Body    = $message;
+
+        if ($mail->send()) {
+            echo "Comment sent successfully";
+        }
+        else {
+            echo "An error occured. Try again";
+        }
+    }
+
+}
+
+
+ ?>
+
+
+
+  						<!-- login.js file -->
+<!-- 
+//===================================================================//
+ -->
+
+
+var loginForm = document.getElementById('loginForm');
+loginForm.addEventListener('submit', function(event){
+	event.preventDefault();
+	var uname = document.getElementById('uname').value 
+	var pword = document.getElementById('pword').value 
+	var errMsg = document.getElementById('errMsg');
+
+	if (uname.length == "") {
+		errMsg.innerHTML = "Username is required";
+		return false;
+	}
+	else if (pword.length == "") {
+		errMsg.innerHTML = "Password is required";
+		return false;
+	}
+
+	else {
+		errMsg.innerHTML = "";
+		var xhr;
+		if (window.XMLHttpRequest) {
+			xhr = new XMLHttpRequest(); 
+		}
+		else if (window.ActiveXObject) {
+			xhr = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xhr.open("GET","http://localhost:80/myass/action.php?surname="+uname+"&studno="+pword,true);
+        xhr.send();
+
+        xhr.onreadystatechange=function(){
+			if(xhr.readyState == 4 && xhr.status == 200){
+	            if(xhr.responseText === "Login Successful. Redirecting in 2s..."){
+	            errMsg.innerHTML = xhr.responseText;
+	            loginForm.reset();
+	            setTimeout(function(){
+					window.location.href = "register";
+				}, 2000);
+				}
+				if(xhr.responseText === "Invalid login credentials."){
+	              errMsg.innerHTML = xhr.responseText;
+				}
+			}
+		};
+	}
+});
+
+
+  						<!-- main.js file -->
+<!-- 
+//===================================================================//
+ -->
+
+var regStudentForm = document.getElementById('regStudentForm');
+regStudentForm.addEventListener('submit', function(event){
+	event.preventDefault();
+	var lname = document.getElementById('lname').value 
+	var fname = document.getElementById('fname').value 
+	var studno = document.getElementById('studno').value 
+	var dept = document.getElementById('dept').value 
+	var cgpa = document.getElementById('cgpa').value 
+	var semester = document.getElementById('semester').value 
+
+	var errorMsg = document.getElementById('error-msg')
+	var succMsg = document.getElementById('succMsg')
+
+	if (lname == "" || fname == "" || studno == "" || dept == "" || cgpa == "" || semester == "") {
+		errorMsg.innerHTML = "All fields are required";
+		return false;
+	}
+	else {
+		
+
+		errorMsg.innerHTML = "";
+		var xhr;
+		if (window.XMLHttpRequest) {
+			xhr = new XMLHttpRequest(); 
+		}
+		else if (window.ActiveXObject) {
+			xhr = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xhr.open("GET","http://localhost:80/myass/db.php?lname="+lname+"&fname="+fname+"&studno="+studno+"&dept="+dept+"&cgpa="+cgpa+"&semester="+semester,true);
+        xhr.send();
+
+        xhr.onreadystatechange=function(){
+			if(xhr.readyState == 4 && xhr.status == 200){
+	            if(xhr.responseText === "Details uploaded successfully"){
+	            regStudentForm.reset();
+	            succMsg.innerHTML = xhr.responseText;
+	            setTimeout(function(){
+					succMsg.innerHTML = "";
+				}, 2000);
+				}
+				if(xhr.responseText === "An error occured. Try again"){
+	              succMsg.innerHTML = xhr.responseText;
+				}
+			}
+		};
+
+
+	}
+
+});
+
+
+  						<!-- register.js file -->
+<!-- 
+//===================================================================//
+ -->
+
+var registerCourseForm = document.getElementById('registerCourseForm');
+registerCourseForm.addEventListener('submit', function(event){
+	event.preventDefault();
+	var Java = document.getElementById('Java');
+	var PHP = document.getElementById('PHP');
+	var C = document.getElementById('C');
+	var CPlus = document.getElementById('CPlus');
+	var JavaScript = document.getElementById('JavaScript');
+	var CSharp = document.getElementById('CSharp'); 
+	var TypeScript = document.getElementById('TypeScript');
+	var FSharp = document.getElementById('FSharp');
+	var Python = document.getElementById('Python');
+	var SQL = document.getElementById('SQL');
+
+	
+	if (Java.checked) {
+		Java = document.getElementById('Java').value = "Java";
+		document.getElementById("1").remove()
+	}
+	else {
+		Java = document.getElementById('Java').value = "null";
+	}
+
+
+
+	if (PHP.checked) {
+		PHP = document.getElementById('PHP').value = "PHP";
+		document.getElementById("2").remove()
+	}
+	else {
+		PHP = document.getElementById('PHP').value = "null";
+	}
+
+
+
+	if (C.checked) {
+		C = document.getElementById('C').value = "C";
+		document.getElementById("3").remove()
+	}
+	else {
+		C = document.getElementById('C').value = "null";
+	}
+
+
+
+	if (CPlus.checked) {
+		CPlus = document.getElementById('CPlus').value = "CPlus";
+		document.getElementById("4").remove()
+	}
+	else {
+		CPlus = document.getElementById('CPlus').value = "null";
+	}
+
+
+
+
+	if (JavaScript.checked) {
+		JavaScript = document.getElementById('JavaScript').value = "JavaScript";
+		document.getElementById("5").remove()
+	}
+	else {
+		JavaScript = document.getElementById('JavaScript').value = "null";
+	}
+
+
+
+	if (CSharp.checked) {
+		CSharp = document.getElementById('CSharp').value = "CSharp";
+		document.getElementById("6").remove()
+	}
+	else {
+		CSharp = document.getElementById('CSharp').value = "null";
+	}
+
+
+
+	if (TypeScript.checked) {
+		TypeScript = document.getElementById('TypeScript').value = "TypeScript";
+		document.getElementById("7").remove()
+	}
+	else {
+		TypeScript = document.getElementById('TypeScript').value = "null";
+	}
+
+
+
+	if (FSharp.checked) {
+		FSharp = document.getElementById('FSharp').value = "FSharp";
+		document.getElementById("8").remove()
+	}
+	else {
+		FSharp = document.getElementById('FSharp').value = "null";
+	}
+
+
+
+	if (Python.checked) {
+		Python = document.getElementById('Python').value = "Python";
+		document.getElementById("9").remove()
+	}
+	else {
+		Python = document.getElementById('Python').value = "null";
+	}
+
+
+
+	if (SQL.checked) {
+		SQL = document.getElementById('SQL').value = "SQL";
+		document.getElementById("10").remove()
+	}
+	else {
+		SQL = document.getElementById('SQL').value = "null";
+	}
+
+	var errRegMess = document.getElementById('errRegMess');
+
+	var innerWrapper = document.getElementById('innerWrapper');
+
+	var checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+
+	if (checkboxes.length > 5) {
+		errRegMess.innerHTML = 'You cannot select more than 5 courses'
+		return false;
+	}
+	else {
+		errRegMess.innerHTML = "";
+		var xhr;
+		if (window.XMLHttpRequest) {
+			xhr = new XMLHttpRequest(); 
+		}
+		else if (window.ActiveXObject) {
+			xhr = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xhr.open("GET","http://localhost:80/myass/ajx.php?Java="+Java+"&PHP="+PHP+"&C="+C+"&CPlus="+CPlus+"&JavaScript="+JavaScript+"&CSharp="+CSharp+"&TypeScript="+TypeScript+"&FSharp="+FSharp+"&Python="+Python+"&SQL="+SQL,true);
+        xhr.send();
+
+        xhr.onreadystatechange=function(){
+			if(xhr.readyState == 4 && xhr.status == 200){
+	            innerWrapper.innerHTML = xhr.responseText
+			}
+		};
+	}
+});
+
+
+  						<!-- sendComment.js file -->
+<!-- 
+//===================================================================//
+ -->
+
+var sendComment = document.getElementById('sendComment');
+sendComment.addEventListener('submit', function(event){
+	event.preventDefault();
+	var comment = document.getElementById('comment').value 
+
+	if (comment == "") {
+		alert("Please enter a comment before submitting the form");
+		return false;
+	}
+	else {
+
+		var xhr;
+		if (window.XMLHttpRequest) {
+			xhr = new XMLHttpRequest(); 
+		}
+		else if (window.ActiveXObject) {
+			xhr = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xhr.open("GET","http://localhost:80/myass/db.php?comment="+comment,true);
+        xhr.send();
+
+        xhr.onreadystatechange=function(){
+			if(xhr.readyState == 4 && xhr.status == 200){
+	            if(xhr.responseText === "Comment sent successfully"){
+	            sendComment.reset();
+	            alert("Comment sent successfully");
+				}
+				if(xhr.responseText === "An error occured. Try again"){
+	              alert("An error occured. Try again");
+				}
+			}
+		};
+
+
+	}
+
+});
+
+
+  						<!-- styles.css file -->
+<!-- 
+//===================================================================//
+ -->
+
+
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: verdana;
+}
+.header{
+	height: 16vh;
+	background-color: #1e4620;
+	display: flex;
+	justify-content: left;
+}
+.header > img{
+	height: 80px;
+	width: 80px;
+	border-radius: 50%;
+	margin-left: 100px;
+	margin-top: 2vh;
+}
+.header > h4{
+	font-size: 24px;
+	font-weight: 500;
+	margin-left: 20px;
+	line-height: 16vh;
+	color: #ffffff;
+}
+.body{
+	display: flex;
+	justify-content: center;
+	height: 84vh;
+	background-color: #eeeeee;
+}
+.login-wrapper{
+	flex: 0 0 33%;
+    text-align: center;
+    background-color: #ffffff;
+    height: 60vh;
+}
+.login-wrapper > img{
+	width: 90px;
+	height: 90px;
+	margin-top: 30px;
+}
+.login-wrapper > h3{
+	font-size: 16px;
+	font-weight: 500;
+	margin-top: 10px;
+}
+.login-wrapper > h4{
+	font-size: 14px;
+	font-weight: 500;
+	margin-top: 10px;
+	margin-bottom: 20px;
+	font-style: italic;
+}
+input{
+	height: 45px;
+	width: 85%;
+	border: none;
+	outline:none;
+	border-radius: 30px;
+	color: rgba(0, 0, 0, 0.6);
+	padding: 0 0 0 45px;
+	margin-bottom: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	font-size: 16px;
+}
+input[type="checkbox"]{
+	height: 15px;
+}
+button{
+	height: 45px;
+	width: 85%;
+	border: none;
+	outline:none;
+	border-radius: 30px;
+	color: rgba(0, 0, 0, 0.6);
+	margin-bottom: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	font-size: 16px;
+}
+button{
+	background-color: #1e4620;
+	color: rgba(255, 255, 255, 1);
+}
+input:focus{
+	border: 1px rgba(0, 0, 0, 0.6);
+}
+button:hover{
+	opacity: 0.8;
+	cursor: pointer;
+}
+
+
+/*REGISTER.PHP PAGE*/
+.profile{
+	display: flex;
+	justify-content: right;
+	float: right;
+	margin: auto;
+	margin-right: 10px;
+}
+.profile > img{
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	margin-top: 5vh;
+}
+.profile > h6{
+	line-height: 16vh;
+	color: #ffffff;
+	font-size: 12px;
+	text-transform: uppercase;
+	margin-left: 3px;
+	font-weight: 300;
+}
+.profile > a{
+	line-height: 16vh;
+	color: #ffffff;
+	font-size: 12px;
+	text-transform: uppercase;
+	margin-left: 10px;
+	font-weight: 300;
+}
+
+.body-wrapper{
+/*	height: 16vh;*/
+/*	background-color: #1e4620;*/
+	display: flex;
+	justify-content: center;
+}
+.left{
+	flex: 0 0 30%;
+    text-align: left;
+    overflow-y: scroll;
+    height: 84vh;
+}
+.left-body{
+	margin-top: 2vh;
+}
+.prof{
+	font-weight: 400;
+	font-size: 14px;
+	text-transform: uppercase;
+	margin-left: 15%;
+	margin-top: 5vh;
+}
+.student-details{
+	height: 5vh;
+	background-color: #1e4620;
+	width: 70%;
+	margin-left: 15%;
+	border-radius: 2px;
+}
+.stud_img{
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	margin-top: 10px;
+}
+.profile_tbl{
+	margin-left: 15%;
+}
+table{
+	border-collapse:collapse;
+	width:70%;
+	margin: auto;
+	margin-left: 15%;
+}
+td, th{
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 3px;
+}
+.insert-form{
+	margin-left: 5%;
+	width: 90%;
+	margin-top: 6vh;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	padding: 30px;
+	margin-bottom: 30px;
+}
+.insert-form-title{
+	font-weight: 400;
+	font-size: 16px;
+	margin-bottom: 20px;
+	text-align: center !important;
+}
+
+.right{
+	flex: 0 0 70%;
+    text-align: center;
+    padding: 0 15px 0 15px;
+    overflow-y: scroll;
+    height: 84vh;
+}
+
+.header-title{
+	background-color: #eeeeee;
+	margin-top: 4vh;
+	padding: 10px;
+}
+.header-title > h5{
+	font-weight: 400;
+	text-transform: uppercase;
+	font-size: 17px;
+}
+
+.warning-para{
+	font-size: 13px;
+	font-weight: 400;
+	margin-top: 3vh;
+	margin-bottom: 3vh;
+}
+.warning-para > b{
+	color: rgba(255, 0, 0, 1.0);
+}
+.tarea{
+	resize: none;
+	width: 90%;
+	margin-left: 5%;
+	outline: 0;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	padding: 10px;
+	font-size: 14px;
+}
+#error-msg{
+	text-align: center;
+	color: red;
+	margin-top: 5px;
+}
+#succMsg{
+	text-align: center;
+	color: green;
+	margin-top: 5px;
+}
+
+
+
+  						<!-- .htaccess file -->
+<!-- 
+//===================================================================//
+ -->
+
+
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [NC,L]
